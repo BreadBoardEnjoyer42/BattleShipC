@@ -2,9 +2,9 @@
 // Name: BattleShipCPE223
 // Author: Wyatt Bowman
 // Date: 11/1/25
-// Version: V0.1
+// Version: V0.2
 // Description:
-// Details: UPDATE TO FGETS
+// Changes: 1. Fixed coordinate system it was reversed. 2. Added vertical boats, still not overlapping protection
 //==========================================
 
 #include <stdio.h>
@@ -25,7 +25,7 @@ int main()
     int rotate;
 
 
-// This code is just for develpoment  
+// This code is just for develpoment
     for(int i = 0; i <= 10; i++){ // fill with zeros and creating margins
         printf("\n\n");
         for(int j = 0; j <= 10; j++){
@@ -65,10 +65,14 @@ int setBoats(int xCoord, int yCoord, int boatIndex, int orientation){ //placing 
     int length[5] = {5, 4, 3, 3, 2}; // lengths of each piece
 
     if(orientation == 1){
-        for (int i = 0; i < length[boatIndex]; i++) {
-            BattleArray[xCoord + i][yCoord] = 1; // placing boats in array with size
+        for (int iVert = 0; iVert < length[boatIndex]; iVert++) {
+            BattleArray[yCoord + iVert][xCoord] = 1; // placing boats in array with size
         }
-    }else{} // insert horizontal code here after fixing filter statement for vert
+    }else if(orientation == 0){
+        for (int iHor = 0; iHor < length[boatIndex]; iHor++) {
+            BattleArray[yCoord][xCoord + iHor] = 1; // placing boats in array with size, not placing horizontally fix
+        }
+    }
     return 1;
 }
 
