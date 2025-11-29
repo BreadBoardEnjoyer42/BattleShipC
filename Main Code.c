@@ -1,11 +1,10 @@
 //==========================================
 // Name: BattleShipCPE223
 // Author: Wyatt Bowman
-// Date: 11/1/25
-// Version: V0.4
-// Description: This includes a very basic placement function that allows users to place 1x1 test boats
-//              This will also serve as the algorithm for the actual placing of attacks
-// Changes: made new function, got rid of not needed comments, going to add lengths in next version
+// Date: 11/29/25
+// Version: V0.5
+// Description: user can now rotate boats and there is a detection/reset feature with the placement algoirthim
+// Changes: updated and added alot of features to the getUserBoatPlacement function, mainly validating user input
 //==========================================
 
 #include <stdio.h>
@@ -18,8 +17,8 @@
 int startScreen(int);
 void battleShipCover_ASCII();
 void displayBoard(char player[2][100], bool, int, char playerInput[2][10][10][3], char fogPlayerData[2][10][10][3]);
-void getUserBoatPlacement(char playerData[2][10][10][3], char fogPlayerData[2][10][10][3], char boardPieces[5][3], char playerName[2][100],
-                          int turn);
+void getUserBoatPlacement(char playerData[2][10][10][3], char fogPlayerData[2][10][10][3], char boardPieces[5][3],
+                          char playerName[2][100], int turn, int boatLength[5]);
 
 int main()
 {
@@ -51,26 +50,25 @@ int main()
             scanf("%*[^\n]");  // Skip characters until newline
             scanf("%*c");      // Consume the newline
 
-                for(int playerNumber = 0; playerNumber < 2; playerNumber++){ // getting the usernames of each player
-                    printf("\t\t\n\nWhat is the name of Player %d?:\t\n\n", playerNumber + 1);
-                    fgets(playerName[playerNumber], sizeof(playerName[playerNumber]), stdin);
-                    int length = strlen(playerName[playerNumber]); // bad practice fix later
-                    playerName[playerNumber][length - 1] = '\0'; // making sure the last real character isn't a newline
-                }
-            while(1){ // need win condition
+            for(int playerNumber = 0; playerNumber < 2; playerNumber++){ // getting the usernames of each player
+                printf("\t\t\n\nWhat is the name of Player %d?:\t\n\n", playerNumber + 1);
+                fgets(playerName[playerNumber], sizeof(playerName[playerNumber]), stdin);
+                int length = strlen(playerName[playerNumber]); // bad practice fix later
+                playerName[playerNumber][length - 1] = '\0'; // making sure the last real character isn't a newline
+            }
 
-                //TEMP CODE FOR FILLING CELLS WITH EMPTY WATER
-                    if(turn == 0){
-                        for (int p = 0; p < 2; p++) {
-                            for (int i = 0; i < 10; i++) {
-                                for (int j = 0; j < 10; j++) {
-                                    strcpy(playerData[p][i][j], "  ");
-                                        strcpy(fogPlayerData[p][i][j], "  ");
-                                }
-                            }
-                        }
+            for (int p = 0; p < 2; p++) {
+                for (int i = 0; i < 10; i++) {
+                    for (int j = 0; j < 10; j++) {
+                        strcpy(playerData[p][i][j], "  ");
+                        strcpy(fogPlayerData[p][i][j], "  ");
                     }
-                //TEMP CODE FOR FILLING CELLS WITH EMPTY WATER
+                }
+            }
+
+            getUserBoatPlacement(playerData, fogPlayerData, boardPieces, playerName, turn, boatLength);
+
+            while(1){ // need win condition
 
                 displayBoard(playerName, screenShake, turn, playerData, fogPlayerData); // just testing output
 
@@ -80,9 +78,6 @@ int main()
                         _sleep(500); //sleep 100ms from windows.h
                     }
                 }
-
-
-                getUserBoatPlacement(playerData, fogPlayerData, boardPieces, playerName, turn);
 
                 scanf("%d");
                 turn++;
@@ -189,14 +184,20 @@ void displayBoard(char player[2][100], bool screenShake, int turn, char playerIn
 // Function for handling user input and moving around the board
 
 void getUserBoatPlacement(char playerData[2][10][10][3], char fogPlayerInput[2][10][10][3],
-                          char boardPieces[5][3], char playerName[2][100], int turn){
+                          char boardPieces[5][3], char playerName[2][100], int turn, int boatLength[5]){
 
-    char input = 0, duckedCell[3] = "  ";
-    int hori, vert;
+    //NEED FEATURE FOR USER TO BE ABLE TO ESCAPE IF THEY GET STUCK
+
+    char input, orientation,  duckedCell[3] = "  ";
+    int hori, vert, newVert, newHori, valid;
 
     for(int i = 0; i < 5; i++){
+        selectionStart:
+        input = 0; // reset the input so while loop triggers again
         hori = 0; // reset everytime NEED TO MAKE SURE IF USER PLACES BOAT AT ORIGIN WE FILTER FOR THAT
         vert = 0;
+        newHori = hori;
+        newVert = vert;
         strcpy(duckedCell, playerData[turn][vert][hori]); // copy the default location into the duckedCell
         strcpy(playerData[turn][vert][hori], "[]"); //user cursor
 
@@ -207,41 +208,86 @@ void getUserBoatPlacement(char playerData[2][10][10][3], char fogPlayerInput[2][
 
             strcpy(playerData[turn][vert][hori], duckedCell); // put old cell back
 
-            if(input == 'w')
-                vert--; // make switch statement later
-            else if(input == 's')
-                vert++;
-            else if(input == 'a')
-                hori--;
-            else if(input == 'd')
-                hori++;
+            if(input == 'w' || input == 'W')
+                newVert--; // make switch statement later
+            else if(input == 's' || input == 'S')
+                newVert++;
+            else if(input == 'a' || input == 'A')
+                newHori--;
+            else if(input == 'd' || input == 'D')
+                newHori++;
             else if(input != 'q')
                 continue; //if user quits they don't have to change the state
-            else
 
-            if(vert < 0)
-                vert = 0; //checking is user input is valid or not by forcing bounds
-            if(vert > 9)
-                vert = 9;
-            if(hori < 0)
-                hori = 0;
-            if(hori > 9)
-                hori = 9;
+            if(newVert < 0)
+                newVert = 0; //checking is user input is valid or not by forcing bounds
+            if(newVert > 9)
+                newVert = 9;
+            if(newHori < 0)
+                newHori = 0;
+            if(newHori > 9)
+                newHori = 9;
 
-            strcpy(duckedCell, playerData[turn][vert][hori]); //store what was there before
-
-            if(strcmp(playerData[turn][vert][hori], "  ") != 0){ //checking the validity of the sqaure
+            if(strcmp(playerData[turn][newVert][newHori], "  ") != 0){ //checking the validity of the sqaure
                 printf("This Cell is Taken, Try Again!\n");
-                _sleep(500); // don't think I actually need this right now
-                strcpy(playerData[turn][vert][hori], duckedCell); // put old cell back
                 continue;
             }
-
+            strcpy(playerData[turn][vert][hori], duckedCell); // erase old cursor
+            vert = newVert;
+            hori = newHori;
+            strcpy(duckedCell, playerData[turn][vert][hori]);
             strcpy(playerData[turn][vert][hori], "[]"); //user cursor
         }
-    strcpy(playerData[turn][vert][hori], boardPieces[i]); // place data
-    displayBoard(playerName, 0, turn, playerData, fogPlayerInput); // display
-    input = 0; // reset the input so while loop triggers again
+        printf("Place Boat %s (Length %d). Enter H for horizontal and V for vertical\n", boardPieces[i], boatLength[i]);
+        scanf(" %c", &orientation);
+
+        valid = 0; // checking for validity
+
+        while(valid == 0){
+            valid = 1; // only changes if invalid
+            for(int k = 1; k < boatLength[i]; k++){ // CHECKING BEFORE PLACING
+                // If triggered on V and H then need escape sequence
+                if(orientation == 'V' || orientation == 'v'){
+                    if((vert + boatLength[i] - 1) >= 10){
+                        valid = 0;
+                        break;
+                    }
+                    if(strcmp(playerData[turn][vert + k][hori], "  ") != 0){
+                        valid = 0;
+                        break;
+                    }
+                }else if(orientation == 'H' || orientation == 'h'){
+                    if((hori + boatLength[i] - 1) >= 10){
+                        valid = 0;
+                        break;
+                    }
+                    if(strcmp(playerData[turn][vert][hori + k], "  ") != 0){
+                        valid = 0;
+                        break;
+                    }
+                }else{//invalid input
+                    valid = 0;
+                    break;
+                    }
+                }
+
+                if (!valid){
+                    printf("Invalid Input Try Again or Type 'X' if Stuck\n"); //getting user input and trying again
+                    scanf(" %c", &orientation);
+                    if(orientation == 'X' || orientation == 'x'){ // resets values
+                        strcpy(playerData[turn][vert][hori], duckedCell); //replace with old list item
+                        goto selectionStart; // GOING BACK TO SELECTION
+                    }
+                }
+        }
+        for(int j = 0; j < boatLength[i]; j++){ // place boats now
+            if(orientation == 'V' || orientation == 'v')
+                strcpy(playerData[turn][vert + j][hori], boardPieces[i]); // place data
+
+            else if (orientation == 'H' || orientation == 'h')
+                strcpy(playerData[turn][vert][hori + j], boardPieces[i]); // place data
+        }
+        displayBoard(playerName, 0, turn, playerData, fogPlayerInput); // display
     }
 }
 
