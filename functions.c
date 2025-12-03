@@ -132,7 +132,7 @@ void getUserBoatPlacement(int playerData[2][10][10], char playerName[2][100], in
         newHori = hori;
         newVert = vert;
         prevLocation=playerData[turn][vert][hori]; //copy into temp variable
-        playerData[turn][vert][hori]=12; //user cursor
+        playerData[turn][vert][hori] = 12; //user cursor
 
         while(!((input=='q')||(input=='Q'))){
             displayBoard(playerName, 0, turn, playerData, shipValueAbrv); // show placement
@@ -155,13 +155,13 @@ void getUserBoatPlacement(int playerData[2][10][10], char playerName[2][100], in
                 continue; //if user quits they don't have to change the state
 
             if(newVert < 0)
-                newVert = 0; //checking is user input is valid or not by forcing bounds
+                newVert = 9; //checking is user input is valid or not by forcing bounds
             if(newVert > 9)
-                newVert = 9;
+                newVert = 0;
             if(newHori < 0)
-                newHori = 0;
-            if(newHori > 9)
                 newHori = 9;
+            if(newHori > 9)
+                newHori = 0;
 
             if(playerData[turn][newVert][newHori] % 12 != 0){ //checking the validity of the square
                 printf("This Cell is Taken, Try Again!\n");
@@ -299,13 +299,13 @@ void attackSmack(int turn, int playerData[2][10][10], char playerName[2][100], c
                 continue; //if user quits they don't have to change the state
 
             if(newCol < 0)
-                newCol = 0; //checking is user input is valid or not by forcing bounds
+                newCol = 9; //checking is user input is valid or not by forcing bounds
             if(newCol > 9)
-                newCol = 9;
+                newCol = 0;
             if(newRow < 0)
-                newRow = 0;
-            if(newRow > 9)
                 newRow = 9;
+            if(newRow > 9)
+                newRow = 0;
 
             if(playerData[turn][newRow][newCol] % 12 != 0){ //checking the validity of the square
                 printf("This Cell is Taken, Try Again!\n");
