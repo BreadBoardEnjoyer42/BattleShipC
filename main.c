@@ -1,13 +1,10 @@
 //==========================================
 // Name: BattleShipCPE223
-// Author: Wyatt Bowman and Kieran Cavanagh
-// Date: 12/2/25
-// Version: V0.10
-// Description: Full Beta Of Battleships
-// Changes: created variable to check if a coordinate was taken
-//          still need screen shake
-//          fixed pause to be a toggle rather than a trigger
-//          fixed cursor appearing from last coordinate
+// Author: Wyatt Bowman
+// Date: 12/6/25
+// Version: V0.11
+// Description: Variable Board Sizes!!
+// Changes: There is now a prompt for the users when they play for the size of the board which is between 5 and 15
 //
 //==========================================
 
@@ -16,14 +13,14 @@
 #include <stdlib.h> // Required for system()
 #include <stdbool.h>
 #include "functions.h"
-
+int size;
 
 int main(){
     //Start Variables
     int userX, userY, rotate, turn = 0, booleanTurn = 0, value = 1;
     int boatLength[5] = {5, 4, 3, 3, 2};
     int shipValueType[5]={10,8,6,4,2};
-    int playerData[2][10][10]={0}; // player, row, column
+    int playerData[2][20][20]={0}; // player, row, column
 
     char playerName[2][100]; // make smaller in future
     char shipValueAbrv[14][5] = {" ~~ "," 00 "," AC ","XACX"," BA ","XBAX"," SU ","XSUX"," CR ","XCRX"," DE ","XDEX"," [] ","Sunk"};
@@ -63,7 +60,7 @@ int main(){
                 int length = strlen(playerName[playerNumber]); // bad practice fix later
                 playerName[playerNumber][length - 1] = '\0'; // making sure the last real character isn't a newline
             }
-
+                getSize(&size);
                 //Player One Placement
                 getUserBoatPlacement(playerData, playerName, booleanTurn, boatLength, shipValueType, shipValueAbrv, ships);
                 //Transition
