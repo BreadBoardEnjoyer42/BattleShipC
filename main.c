@@ -2,9 +2,9 @@
 // Name: BattleShipCPE223
 // Author: Wyatt Bowman
 // Date: 12/6/25
-// Version: V0.11
-// Description: Variable Board Sizes!!
-// Changes: There is now a prompt for the users when they play for the size of the board which is between 5 and 15
+// Version: V0.12
+// Description: Bug Fix
+// Changes: Fixed big where if the user places anything at the origin then it would let them place over
 //
 //==========================================
 
