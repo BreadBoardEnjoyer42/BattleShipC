@@ -122,7 +122,13 @@ void displayBoard(char player[2][100], bool screenShake, int booleanTurn, int pl
 void printPlayerBoardRow(int player,int row,int playerInput[2][20][20],char shipValueAbrv[14][5]){
     for (int col = 0; col < size; col++){
         printf("|");
-        printf(shipValueAbrv[playerInput[player][row][col]]);
+        int v = playerInput[player][row][col];
+        if (v < 0 || v >= 14) {
+            printf("??  "); // fallback idk im troubleshooting here
+        } else {
+            printf("%s", shipValueAbrv[v]);
+        }
+
     }
     printf("|");
 }
@@ -189,16 +195,11 @@ void getUserBoatPlacement(int playerData[2][20][20], char playerName[2][100], in
             if(newVert < 0)
                 newVert = size - 1; //checking is user input is valid or not by forcing bounds
             if(newVert > size - 1)
-                newVert = size - 1;
+                newVert = 0;
             if(newHori < 0)
                 newHori = size - 1;
             if(newHori >  size - 1)
                 newHori = 0;
-
-            if(playerData[turn][newVert][newHori]%12 != 0){ //checking the validity of the square
-                printf("This Cell is Taken, Try Again!\n");
-                continue;
-            }
 
             playerData[turn][vert][hori] = prevLocation; // erase old cursor
             vert = newVert;
@@ -217,11 +218,7 @@ void getUserBoatPlacement(int playerData[2][20][20], char playerName[2][100], in
 
         while(!valid){
             valid = true; // only changes if invalid
-            if (playerData[turn][vert][hori] != 0) { // SLAP SLAP
-                valid = false;                       // SLAP SLAP
-                break;                               // SLAP SLAP
-            }
-            for(int k = 1; k < boatLength[i]; k++){ // CHECKING BEFORE PLACING
+            for(int k = 0; k < boatLength[i]; k++){ // CHECKING BEFORE PLACING
                 // If triggered on V and H then need escape sequence
                 if(orientation == 'V' || orientation == 'v'){
                     if((vert + boatLength[i]) > size){
@@ -309,7 +306,8 @@ void transistion(int booleanTurn){
 
 
 
-void attackSmack(int turn, int playerData[2][20][20], char playerName[2][100], char shipValueAbrv[14][5]){
+void attackSmack(int turn, int playerData[2][20][20], char playerName[2][100], char shipValueAbrv[14][5],
+                bool *screenShake){
     selectionStart:
 
     char input, orientation;
@@ -317,11 +315,13 @@ void attackSmack(int turn, int playerData[2][20][20], char playerName[2][100], c
     bool valid;
     int attackRow = 0;
     int attackCol = 0;
+    int scoreArray[5];
     static int CHECK[20][20] = {0}; // static so its not redefined every time
 
     input = 0; // reset the input so while loop triggers again
     newRow = attackRow;
     newCol = attackCol;
+
     prevLocation = playerData[turn][attackRow][attackCol]; //copy into temp variable
 
         while(!((input == 'q')||(input == 'Q'))){
@@ -352,11 +352,12 @@ void attackSmack(int turn, int playerData[2][20][20], char playerName[2][100], c
                 newRow = size;
             if(newRow > size)
                 newRow = 0;
-
+            /*
             if(playerData[turn][newRow][newCol] % 12 != 0){ //checking the validity of the square
                 printf("This Cell is Taken, Try Again!\n");
                 continue;
             }
+            */
             attackCol = newCol;
             attackRow = newRow;
             prevLocation = playerData[turn][attackRow][attackCol];
@@ -366,9 +367,12 @@ void attackSmack(int turn, int playerData[2][20][20], char playerName[2][100], c
             playerData[turn][attackRow][attackCol] = prevLocation;
             if(CHECK[newRow][newCol] == 0){
                 playerData[(!turn)][newRow][newCol] += 1;
+                if(((playerData[(!turn)][newRow][newCol] + 2) % 2) == 1){
+                    *screenShake = true;
+                }
                 CHECK[newRow][newCol]++;
             }
-            displayBoard(playerName, 0, turn, playerData, shipValueAbrv); // display
+            displayBoard(playerName, screenShake, turn, playerData, shipValueAbrv); // display
 }
 
 int getSize(int *sizeF){
@@ -383,7 +387,6 @@ int getSize(int *sizeF){
         while(!validateUserInputInt(&out)){ // running validation check for user input
                 printf("Invalid Input\n");
         }
-        printf("%d", out);
         *sizeF = out;
         count++;
     }
