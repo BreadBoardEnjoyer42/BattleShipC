@@ -2,7 +2,7 @@
 #define FUNCTIONS_H_INCLUDED
 #include <stdbool.h>
 
-#define MAX_SIZE 25
+#define MAX_SIZE 15
 #define MIN_SIZE 5
 extern int size; // size of board value
 
@@ -26,7 +26,8 @@ void getUserBoatPlacement(int playerData[2][20][20], char playerName[2][100], in
                           int shipValueType[5], char shipValueAbrv[14][5], char ships[5][20]);
 void transistion(int);
 
-void attackSmack(int turn, int playerData[2][20][20], char playerName[2][100], char shipValueAbrv[14][5]);
+void attackSmack(int turn, int playerData[2][20][20], char playerName[2][100], char shipValueAbrv[14][5],
+                bool *screenShake);
 
 int getSize(int *sizeF);
 
