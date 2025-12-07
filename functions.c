@@ -316,7 +316,7 @@ void attackSmack(int turn, int playerData[2][20][20], char playerName[2][100], c
     int attackRow = 0;
     int attackCol = 0;
     int scoreArray[5];
-    static int CHECK[20][20] = {0}; // static so its not redefined every time
+    static int CHECK[2][20][20] = {0}; // static so its not redefined every time
 
     input = 0; // reset the input so while loop triggers again
     newRow = attackRow;
@@ -345,12 +345,12 @@ void attackSmack(int turn, int playerData[2][20][20], char playerName[2][100], c
                 continue; //if user quits they don't have to change the state
 
             if(newCol < 0)
-                newCol = size; //checking is user input is valid or not by forcing bounds
-            if(newCol > size)
+                newCol = size - 1; //checking is user input is valid or not by forcing bounds
+            if(newCol > size - 1)
                 newCol = 0;
             if(newRow < 0)
-                newRow = size;
-            if(newRow > size)
+                newRow = size - 1;
+            if(newRow > size - 1)
                 newRow = 0;
             /*
             if(playerData[turn][newRow][newCol] % 12 != 0){ //checking the validity of the square
@@ -365,14 +365,14 @@ void attackSmack(int turn, int playerData[2][20][20], char playerName[2][100], c
 
         }
             playerData[turn][attackRow][attackCol] = prevLocation;
-            if(CHECK[newRow][newCol] == 0){
+            if(CHECK[turn][newRow][newCol] == 0){
                 playerData[(!turn)][newRow][newCol] += 1;
-                if(((playerData[(!turn)][newRow][newCol] + 2) % 2) == 1){
+                if(playerData[(!turn)][newRow][newCol] % 2 == 1 && playerData[(!turn)][newRow][newCol] > 2){
                     *screenShake = true;
                 }
-                CHECK[newRow][newCol]++;
+                CHECK[turn][newRow][newCol]++;
             }
-            displayBoard(playerName, screenShake, turn, playerData, shipValueAbrv); // display
+            //displayBoard(playerName, 0, turn, playerData, shipValueAbrv); // display
 }
 
 int getSize(int *sizeF){
@@ -419,6 +419,21 @@ void findEmptyCell(int playerData[2][20][20], int *hori, int *vert, int booleanT
                 continue;
             }
         }
+}
+
+void winCondition(int playerData[2][20][20], int booleanTurn, int points[2]){
+    int pointNumber[5] = {1000, 750, 500, 500, 100};
+    for(int i = 0; i < size; i++){
+        for(int j = 0; j < size; j++){
+            if(playerData[(!booleanTurn)][i][j] % 2 == 1 && playerData[(!booleanTurn)][i][j] > 2){
+                for(int k = 1; k < 5; k++){
+                    if(!(playerData[(!booleanTurn)][i][j] % (2*k+1))){
+                        points[booleanTurn] += pointNumber[k];
+                    }
+                }
+            }
+        }
+    }
 }
 
 
