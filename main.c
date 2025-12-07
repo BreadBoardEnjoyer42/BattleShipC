@@ -18,8 +18,9 @@ int size;
 int main(){
     //Start Variables
     int userX, userY, rotate, turn = 0, booleanTurn = 0, value = 1;
+    int playerPoints[2] = {0};
     int boatLength[5] = {5, 4, 3, 3, 2};
-    int shipValueType[5]={10,8,6,4,2};
+    int shipValueType[5]={2,4,6,8,10};
     int playerData[2][20][20]={0}; // player, row, column
 
     char playerName[2][100]; // make smaller in future
@@ -68,25 +69,27 @@ int main(){
                 //Player Two Placement
                 getUserBoatPlacement(playerData, playerName, booleanTurn + 1, boatLength, shipValueType, shipValueAbrv, ships);
 
-
-
-
             while(1){ // need win condition
 
-                if(screenShake){
-                    for(int shakeAmount = 0; shakeAmount < 8; shakeAmount++){
+                if(screenShake == true){
+                    for(int shakeAmount = 0; shakeAmount < 6; shakeAmount++){
                         displayBoard(playerName, (!(shakeAmount % 2)), booleanTurn, playerData, shipValueAbrv);
-                        _sleep(200); //sleep 100ms from windows.h
+                        _sleep(300); //sleep 100ms from windows.h
                     }
                 screenShake = false;
                 }
-
-
 
                 displayBoard(playerName, 0, booleanTurn, playerData, shipValueAbrv); // just testing output
                 //Display The board
                 attackSmack(booleanTurn, playerData, playerName, shipValueAbrv, &screenShake);
                 //ATTACKKKKKKKKKKKKK
+                printf("\n\t\t Points: %d", playerPoints[booleanTurn]);
+                winCondition(playerData, booleanTurn, playerPoints);
+                if(playerPoints[booleanTurn] == 11200){
+                    winScreen_ASCII(booleanTurn);
+                    return 0;
+                }
+                //test win condition
                 turn++;
                 //next persons turn
                 booleanTurn = turn % 2;
