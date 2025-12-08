@@ -138,7 +138,7 @@ void printPlayerFogBoardRow(int player,int row,int playerInput[2][20][20],char s
         }else{
             if(CHECK[player][row][col] != 0){
                 if((v2 % 2) == 1 && v2 > 2){
-                    printf("%s", shipValueAbrv[v2]);
+                    printf(" XX ");
                 }else{
                     printf("Miss");
                 }
