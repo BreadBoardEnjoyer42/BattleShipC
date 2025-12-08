@@ -15,7 +15,6 @@
 #include "functions.h"
 int size;
 int playerPoints[2] = {0};
-int oldPlayerPoints[2] = {0}; // points from Q(t-1)
 int CHECK[2][20][20] = {0};
 
 
@@ -125,3 +124,4 @@ int main(){
 }
 
 // END MAIN
+
