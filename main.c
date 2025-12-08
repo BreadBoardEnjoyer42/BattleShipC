@@ -1,9 +1,9 @@
 //==========================================
 // Name: BattleShipCPE223
 // Author: Wyatt Bowman
-// Date: 12/8/25
-// Version: V1.00
-// Description: Win Condition, Scoring, finalized visuals, AND added surrender in pause menu. Marking this as first release of the game
+// Date: 12/6/25
+// Version: V0.14
+// Description: Win Condition, Scoring, finalized visuals, AND added surrender in pause menu
 // Changes: fixed win condition, score is now displayed after every turn, and now you can see if where you hit is a miss or hit
 //
 //==========================================
@@ -26,7 +26,7 @@ int main(){
     int playerData[2][20][20]={0}; // player, row, column
 
     char playerName[2][100]; // make smaller in future
-    char shipValueAbrv[14][5] = {" ~~"," 00"," AC","XAC"," BA","XBA"," SU","XSU"," CR","XCR"," DE","XDE"," []","Sunk"};
+    char shipValueAbrv[14][5] = {" ~~ ","Miss"," AC ","XACX"," BA ","XBAX"," SU ","XSUX"," CR ","XCRX"," DE ","XDEX"," [] ","Sunk"};
     char mainScreenOption = 0;
     char oldMainScreenOption = 0;
 
@@ -124,4 +124,3 @@ int main(){
 }
 
 // END MAIN
-
