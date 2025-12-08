@@ -1,10 +1,10 @@
 //==========================================
 // Name: BattleShipCPE223
 // Author: Wyatt Bowman
-// Date: 12/6/25
-// Version: V0.13
-// Description: Added Screen Shake
-// Changes: Added a pass by reference value to the attack smack function such that after the users turn there is a screen shake if there is a hit
+// Date: 12/8/25
+// Version: V1.00
+// Description: Win Condition, Scoring, finalized visuals, AND added surrender in pause menu. Marking this as first release of the game
+// Changes: fixed win condition, score is now displayed after every turn, and now you can see if where you hit is a miss or hit
 //
 //==========================================
 
@@ -14,23 +14,27 @@
 #include <stdbool.h>
 #include "functions.h"
 int size;
+int playerPoints[2] = {0};
+int oldPlayerPoints[2] = {0}; // points from Q(t-1)
+int CHECK[2][20][20] = {0};
+
 
 int main(){
     //Start Variables
     int userX, userY, rotate, turn = 0, booleanTurn = 0, value = 1;
-    int playerPoints[2] = {0};
     int boatLength[5] = {5, 4, 3, 3, 2};
     int shipValueType[5]={2,4,6,8,10};
     int playerData[2][20][20]={0}; // player, row, column
 
     char playerName[2][100]; // make smaller in future
-    char shipValueAbrv[14][5] = {" ~~ "," 00 "," AC ","XACX"," BA ","XBAX"," SU ","XSUX"," CR ","XCRX"," DE ","XDEX"," [] ","Sunk"};
+    char shipValueAbrv[14][5] = {" ~~"," 00"," AC","XAC"," BA","XBA"," SU","XSU"," CR","XCR"," DE","XDE"," []","Sunk"};
     char mainScreenOption = 0;
     char oldMainScreenOption = 0;
 
     char ships[5][20] = {"Carrier", "Battleship", "Submarine", "Cruiser", "Destroyer"};
 
     bool screenShake = false; // FOR GAME NEEDS TO BE DYNAMIC
+    bool airStrikeMode = false;
     //End Variables
 
     while(!(mainScreenOption == 'q' || mainScreenOption == 'Q')){ // change to when user enters new line then quits
@@ -61,13 +65,19 @@ int main(){
                 int length = strlen(playerName[playerNumber]); // bad practice fix later
                 playerName[playerNumber][length - 1] = '\0'; // making sure the last real character isn't a newline
             }
-                getSize(&size);
-                //Player One Placement
-                getUserBoatPlacement(playerData, playerName, booleanTurn, boatLength, shipValueType, shipValueAbrv, ships);
-                //Transition
-                transistion(turn + 1);
-                //Player Two Placement
-                getUserBoatPlacement(playerData, playerName, booleanTurn + 1, boatLength, shipValueType, shipValueAbrv, ships);
+            getSize(&size);
+            //Player One Placement
+            getMode(&airStrikeMode);
+            // does the user want to play airstrike mode?
+            getUserBoatPlacement(playerData, playerName, booleanTurn, boatLength, shipValueType, shipValueAbrv, ships);
+            //Transition
+            transistion(turn + 1);
+            //Player Two Placement
+            getUserBoatPlacement(playerData, playerName, booleanTurn + 1, boatLength, shipValueType, shipValueAbrv, ships);
+            //Transition
+            transistion(turn);
+
+
 
             while(1){ // need win condition
 
@@ -81,11 +91,11 @@ int main(){
 
                 displayBoard(playerName, 0, booleanTurn, playerData, shipValueAbrv); // just testing output
                 //Display The board
-                attackSmack(booleanTurn, playerData, playerName, shipValueAbrv, &screenShake);
+                attackSmack(booleanTurn, playerData, playerName, shipValueAbrv, &screenShake, airStrikeMode);
                 //ATTACKKKKKKKKKKKKK
                 printf("\n\t\t Points: %d", playerPoints[booleanTurn]);
-                winCondition(playerData, booleanTurn, playerPoints);
-                if(playerPoints[booleanTurn] == 11200){
+                winCondition(playerData, booleanTurn);
+                if(playerPoints[booleanTurn] >= 11200){
                     winScreen_ASCII(booleanTurn);
                     return 0;
                 }
