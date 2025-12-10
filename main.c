@@ -1,10 +1,10 @@
 //==========================================
 // Name: BattleShipCPE223
 // Author: Wyatt Bowman
-// Date: 12/6/25
-// Version: V0.14
-// Description: Win Condition, Scoring, finalized visuals, AND added surrender in pause menu
-// Changes: fixed win condition, score is now displayed after every turn, and now you can see if where you hit is a miss or hit
+// Date: 12/10/25
+// Version: V1.1
+// Description: Made GUI more user friendly
+// Changes: changes to main menu and more text for each user to input
 //
 //==========================================
 
@@ -20,6 +20,7 @@ int CHECK[2][20][20] = {0};
 
 int main(){
     //Start Variables
+    gameStart:
     int userX, userY, rotate, turn = 0, booleanTurn = 0, value = 1;
     int boatLength[5] = {5, 4, 3, 3, 2};
     int shipValueType[5]={2,4,6,8,10};
@@ -109,10 +110,19 @@ int main(){
         break;
         case 2: // HELP OPTION
             printf("\n\nVisit \"https://www.wikihow.com/Play-Battleship\" for more information\n\n");
+            printf("\n\n Press Enter to Go Back To Main Page");
+            getc(stdin);
+            system("cls");
+            goto gameStart;
+
         break;
         case 3: // CREDITS
             printf("\n\nDeveloped by Wyatt Bowman and Kieran Cavanagh\n\n");
             titleScreen();
+            printf("\n\n Press Enter to Go Back To Main Page");
+            getc(stdin);
+            system("cls");
+            goto gameStart;
         break;
         default:
             printf("Invalid Input, Try again");
