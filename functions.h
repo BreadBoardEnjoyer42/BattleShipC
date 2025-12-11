@@ -6,7 +6,7 @@
 #define MIN_SIZE 5
 extern int size; // size of board value
 extern int playerPoints[2];
-extern int CHECK[2][20][20];
+extern int CHECK[2][15][15];
 
 
 // MAIN LOGIC FUNCTIONS
@@ -18,26 +18,26 @@ int validateUserInputInt(int *out);
 
 void pause();
 
-void displayBoard(char player[2][100], bool screenShake, int booleanTurn, int playerInput[2][20][20], char shipValueAbrv[14][5]);
+void displayBoard(char player[2][31], bool screenShake, int booleanTurn, int playerInput[2][15][15], char shipValueAbrv[14][5]);
 
-void printPlayerBoardRow(int player,int row,int playerInput[2][20][20],char shipValueAbrv[14][5]);
+void printPlayerBoardRow(int player,int row,int playerInput[2][15][15],char shipValueAbrv[14][5]);
 
-void printPlayerFogBoardRow(int player,int row,int playerInput[2][20][20],char shipValueAbrv[14][5]);
+void printPlayerFogBoardRow(int player,int row,int playerInput[2][15][15],char shipValueAbrv[14][5]);
 
-void getUserBoatPlacement(int playerData[2][20][20], char playerName[2][100], int turn, int boatLength[5],
+void getUserBoatPlacement(int playerData[2][15][15], char playerName[2][31], int turn, int boatLength[5],
                           int shipValueType[5], char shipValueAbrv[14][5], char ships[5][20]);
 void transistion(int);
 
-void attackSmack(int turn, int playerData[2][20][20], char playerName[2][100], char shipValueAbrv[14][5],
+void attackSmack(int turn, int playerData[2][15][15], char playerName[2][31], char shipValueAbrv[14][5],
                 bool *screenShake, bool airStrikeMode);
 
 int getSize(int *sizeF);
 
-void displayBoardHeader(int booleanTurn, char player[2][100]);
+void displayBoardHeader(int booleanTurn, char player[2][31]);
 
-void findEmptyCell(int playerData[2][20][20], int *hori, int *vert, int booleanTurn);
+void findEmptyCell(int playerData[2][15][15], int *hori, int *vert, int booleanTurn);
 
-void winCondition(int playerData[2][20][20], int booleanTurn);
+void winCondition(int playerData[2][15][15], int booleanTurn);
 
 void getMode(bool *airStrikeMode);
 
