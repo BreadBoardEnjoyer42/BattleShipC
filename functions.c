@@ -15,12 +15,14 @@ int validateUserInput(char *out){
        return 0; // EXIT_SUCCESS
 
     char value, bufferCheck;
-    static int pCheck = 1;// for using P as a toggle and static so it keeps its value
+    static int pCheck = 1;
+    // for using P as a toggle and static so it keeps its value
 
     if(sscanf(line, " %c %c", &value, &bufferCheck) == 1){
         *out = value;
+        // write to pointer
         if(value == 'p' || value == 'P'){
-            pCheck++;
+            pCheck++; // does user press P
                 if(!(pCheck % 2)){ // TOGGLE FUNCTION
                     pause();
                 }
@@ -41,6 +43,7 @@ int validateUserInputInt(int *out){
 
     if(sscanf(line, " %d %c", &value, &bufferCheck) == 1){
         *out = value;
+        // write to pointer
         if(value == 'p' || value == 'P'){
             pCheck++;
                 if(!(pCheck % 2)){ // TOGGLE FUNCTION
@@ -124,9 +127,11 @@ void printPlayerBoardRow(int player,int row,int playerInput[2][15][15],char ship
         printf("|");
         int v = playerInput[player][row][col];
             printf("%s", shipValueAbrv[v]);
+            // printing the values per row
         }
 
     printf("|");
+    // print the bars
 }
 
 void printPlayerFogBoardRow(int player,int row,int playerInput[2][15][15],char shipValueAbrv[14][5]){
@@ -137,13 +142,18 @@ void printPlayerFogBoardRow(int player,int row,int playerInput[2][15][15],char s
             printf("%s", shipValueAbrv[playerInput[player][row][col]]);
         }else{
             if(CHECK[player][row][col] != 0){
+            // checking if already hit
                 if((v2 % 2) == 1 && v2 > 2){
+                // is hit on player array
                     printf(" XX ");
+                    // show hit
                 }else{
                     printf("Miss");
+                    // show miss
                 }
             }else{
                 printf(" ~~ ");
+                //water
             }
         }
 
@@ -165,17 +175,20 @@ void getUserBoatPlacement(int playerData[2][15][15], char playerName[2][31], int
 
     for(int i = 0; i < 5; i++){
         selectionStart:
+        // our go to tag
         input = 0; // reset the input so while loop triggers again
         findEmptyCell(playerData, &hori, &vert, turn);
+        // Find the first empty cell starting at the origin
         newHori = hori;
         newVert = vert;
         prevLocation = playerData[turn][vert][hori]; //copy into temp variable
 
         playerData[turn][vert][hori] = 12; //user cursor
 
-        while(!((input=='q')||(input=='Q'))){
+        while(!((input == 'q') || (input == 'Q'))){
+        // Locked in value
             displayBoard(playerName, 0, turn, playerData, shipValueAbrv); // show placement
-            printf("\nEnter a direction with W/A/S/D, Q when finished\n");
+            printf("\nEnter a direction with W/A/S/D, Q when finished\n"); // basic instructions
             printf("Boats are placed from largest(5) to smallest(2) with the option\n");
             printf("of rotating it right or downward\n");
 
@@ -185,18 +198,18 @@ void getUserBoatPlacement(int playerData[2][15][15], char playerName[2][31], int
 
             playerData[turn][vert][hori] = prevLocation; // put old cell back
 
-            if(input == 'w' || input == 'W')
-                newVert--; // make switch statement later
+            if(input == 'w' || input == 'W') //cursor logic function
+                newVert--; // go up
             else if(input == 's' || input == 'S')
-                newVert++;
+                newVert++; // go down
             else if(input == 'a' || input == 'A')
-                newHori--;
+                newHori--; // go left
             else if(input == 'd' || input == 'D')
-                newHori++;
+                newHori++; // go right
             else if(input != 'q')
                 continue; //if user quits they don't have to change the state
 
-            if(newVert < 0)
+            if(newVert < 0) // sequence of code for wrapping around array
                 newVert = size - 1; //checking is user input is valid or not by forcing bounds
             if(newVert > size - 1)
                 newVert = 0;
@@ -208,12 +221,12 @@ void getUserBoatPlacement(int playerData[2][15][15], char playerName[2][31], int
             playerData[turn][vert][hori] = prevLocation; // erase old cursor
             vert = newVert;
             hori = newHori;
-            prevLocation = playerData[turn][vert][hori];
-            playerData[turn][vert][hori] = 12; //user cursor
+            prevLocation = playerData[turn][vert][hori]; // store previous location
+            playerData[turn][vert][hori] = 12; // user cursor
         }
 
         printf("Place %s (Length %d). Enter H for horizontal and V for vertical\n", ships[i], boatLength[i]);
-        playerData[turn][vert][hori] = prevLocation; // SLAP SLAP
+        playerData[turn][vert][hori] = prevLocation;
 
         while(!validateUserInput(&orientation)){ // running validation check for user input
             printf("Invalid Input");
@@ -283,7 +296,7 @@ void pause(){
     printf("\n\n\nEnter anything except 'L' or 'P' to Unpause \n\n"); // MAKE TOGGLE
     printf("If player would like to surrender, enter 'L'");
 
-    while(pauseIn != 'p' && pauseIn != 'P'){
+    while(pauseIn != 'p' && pauseIn != 'P'){ // if user wants to unpause
         while(!validateUserInput(&pauseIn)){ // running validation check for user input
             printf("Invalid Input");
         }
@@ -313,7 +326,7 @@ void transistion(int booleanTurn){
 void attackSmack(int turn, int playerData[2][15][15], char playerName[2][31], char shipValueAbrv[14][5],
                 bool *screenShake, bool airstrikeMode){
     selectionStart:
-
+    // goto label
     char input, orientation;
     int newCol, newRow, prevLocation;
     bool valid;
@@ -328,6 +341,7 @@ void attackSmack(int turn, int playerData[2][15][15], char playerName[2][31], ch
     prevLocation = playerData[turn][attackRow][attackCol]; //copy into temp variable
 
         while(!((input == 'q')||(input == 'Q'))){
+        // Confirm
             displayBoard(playerName, 0, turn, playerData, shipValueAbrv); // show placement
             printf("\nPlace your Attack with W/A/S/D, Q when finished\n");
             while(!validateUserInput(&input)){ // running validation check for user input
@@ -337,13 +351,17 @@ void attackSmack(int turn, int playerData[2][15][15], char playerName[2][31], ch
             playerData[turn][attackRow][attackCol] = prevLocation;
 
             if(input == 'w' || input == 'W')
-                newRow--; // make switch statement later
+                newRow--;
+                // go up
             else if(input == 's' || input == 'S')
                 newRow++;
+                // go down
             else if(input == 'a' || input == 'A')
                 newCol--;
+                // go left
             else if(input == 'd' || input == 'D')
                 newCol++;
+                // go right
             else if(input != 'q')
                 continue; //if user quits they don't have to change the state
 
@@ -366,6 +384,8 @@ void attackSmack(int turn, int playerData[2][15][15], char playerName[2][31], ch
             if(CHECK[turn][newRow][newCol] == 0){
                 playerData[(!turn)][newRow][newCol] += 1;
                 if(playerData[(!turn)][newRow][newCol] % 2 == 1 && playerData[(!turn)][newRow][newCol] > 2){
+                // checking if hit and greater than 2
+
                     *screenShake = true;
                     if(airstrikeMode == true){
                         CHECK[turn][newRow][newCol]++;
@@ -374,13 +394,11 @@ void attackSmack(int turn, int playerData[2][15][15], char playerName[2][31], ch
                 }
                 CHECK[turn][newRow][newCol]++;
             }
-            //displayBoard(playerName, 0, turn, playerData, shipValueAbrv); // display
 }
 
-int getSize(int *sizeF){
+int getSize(int *sizeF){ // pass by reference
     int count = 0, out = 0;
     printf("\nWhat size would you like the board to be?\n");
-
     while(out > MAX_SIZE || out < MIN_SIZE){
         if(count != 0){
             printf("\nPlease stay between the bounds of %d and %d\n", MAX_SIZE, MIN_SIZE);
@@ -437,7 +455,8 @@ void findEmptyCell(int playerData[2][15][15], int *hori, int *vert, int booleanT
 
 void winCondition(int playerData[2][15][15], int booleanTurn){
     int pointNumber[5] = {1000, 750, 500, 500, 100};
-    static int PCHECK[2][20][20] = {0}; // static so its not redefined every time
+    // the points per ship AC, BA, SU, CR, DE
+    static int PCHECK[2][15][15] = {0}; // static so its not redefined every time
     for(int i = 0; i < size; i++){
         for(int j = 0; j < size; j++){
             if(playerData[(!booleanTurn)][i][j] % 2 == 1 && playerData[(!booleanTurn)][i][j] > 2){
