@@ -15,7 +15,7 @@
 #include "functions.h"
 int size;
 int playerPoints[2] = {0};
-int CHECK[2][20][20] = {0};
+int CHECK[2][15][15] = {0};
 
 
 int main(){
@@ -24,9 +24,9 @@ int main(){
     int userX, userY, rotate, turn = 0, booleanTurn = 0, value = 1;
     int boatLength[5] = {5, 4, 3, 3, 2};
     int shipValueType[5]={2,4,6,8,10};
-    int playerData[2][20][20]={0}; // player, row, column
+    int playerData[2][15][15]={0}; // player, row, column
 
-    char playerName[2][100]; // make smaller in future
+    char playerName[2][31];
     char shipValueAbrv[14][5] = {" ~~ ","Miss"," AC ","XACX"," BA ","XBAX"," SU ","XSUX"," CR ","XCRX"," DE ","XDEX"," [] ","Sunk"};
     char mainScreenOption = 0;
     char oldMainScreenOption = 0;
@@ -60,10 +60,12 @@ int main(){
         case 1: // PLAY GAME
 
             for(int playerNumber = 0; playerNumber < 2; playerNumber++){ // getting the usernames of each player
-                printf("\t\t\n\nWhat is the name of Player %d?:\t\n\n", playerNumber + 1);
+                printf("\t\t\n\nWhat is the name of Player %d?(MAX 30 CHAR):\t\n\n", playerNumber + 1);
                 fgets(playerName[playerNumber], sizeof(playerName[playerNumber]), stdin);
                 int length = strlen(playerName[playerNumber]); // bad practice fix later
                 playerName[playerNumber][length - 1] = '\0'; // making sure the last real character isn't a newline
+                scanf("%*[^\n]");  // read and discard everything until newline
+                scanf("%*c");      // then discard the newline itself
             }
             getSize(&size);
             //Player One Placement
